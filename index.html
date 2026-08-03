@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Nexus — Every character. Every story. Every timeline." />
+  <title>Nexus</title>
+
+  <style>
+    :root {
+      --background: #080b12;
+      --background-soft: #0f1420;
+      --panel: rgba(19, 26, 40, 0.88);
+      --panel-hover: rgba(27, 38, 58, 0.96);
+      --border: rgba(255, 255, 255, 0.09);
+      --text: #f8fafc;
+      --muted: #9aa6b7;
+      --blue: #4f8cff;
+      --blue-bright: #72a4ff;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(79, 140, 255, 0.16), transparent 34%),
+        radial-gradient(circle at 85% 20%, rgba(90, 62, 200, 0.12), transparent 28%),
+        linear-gradient(180deg, #070a10 0%, #0a0f18 55%, #080b12 100%);
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.25;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8, 11, 18, 0.82);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(145deg, var(--blue-bright), #315ed8);
+      box-shadow: 0 0 30px rgba(79, 140, 255, 0.35);
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 650;
+    }
+
+    .nav-links a {
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .hero {
+      min-height: 610px;
+      display: grid;
+      align-items: center;
+      text-align: center;
+      padding: 96px 0 72px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 8px 13px;
+      border: 1px solid rgba(114, 164, 255, 0.25);
+      border-radius: 999px;
+      background: rgba(79, 140, 255, 0.09);
+      color: #b9d0ff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(4rem, 11vw, 8.5rem);
+      line-height: 0.9;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow: 0 0 45px rgba(79, 140, 255, 0.18);
+    }
+
+    .hero-copy {
+      max-width: 700px;
+      margin: 28px auto 0;
+      color: #c8d0dc;
+      font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+    }
+
+    .search-wrap {
+      position: relative;
+      max-width: 720px;
+      margin: 38px auto 0;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      height: 64px;
+      padding: 0 58px 0 22px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      outline: none;
+      color: var(--text);
+      background: rgba(15, 20, 32, 0.86);
+      box-shadow: var(--shadow);
+      transition: border 0.2s ease, transform 0.2s ease;
+    }
+
+    .search-wrap input:focus {
+      border-color: rgba(114, 164, 255, 0.7);
+      transform: translateY(-1px);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--blue-bright);
+      font-size: 1.25rem;
+    }
+
+    .section {
+      padding: 42px 0 28px;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(1.7rem, 4vw, 2.4rem);
+    }
+
+    .section-heading p {
+      max-width: 610px;
+      color: var(--muted);
+    }
+
+    .feature-card {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      min-height: 330px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 4px);
+      background:
+        linear-gradient(110deg, rgba(14, 19, 31, 0.98), rgba(20, 28, 44, 0.92)),
+        var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .feature-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(28px, 5vw, 56px);
+    }
+
+    .feature-label {
+      color: var(--blue-bright);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .feature-content h3 {
+      margin-top: 12px;
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      line-height: 1;
+    }
+
+    .feature-content p {
+      max-width: 580px;
+      margin-top: 18px;
+      color: #bac4d1;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 22px;
+    }
+
+    .tag {
+      padding: 7px 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: #d8e0eb;
+      background: rgba(255,255,255,0.035);
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 13px;
+      font-weight: 800;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .button-primary {
+      background: linear-gradient(145deg, var(--blue-bright), #3d72e8);
+      color: #07101f;
+    }
+
+    .button-secondary {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .feature-art {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 260px;
+      background:
+        radial-gradient(circle, rgba(79, 140, 255, 0.28), transparent 38%),
+        linear-gradient(135deg, rgba(79, 140, 255, 0.12), rgba(95, 57, 180, 0.08));
+    }
+
+    .feature-art::before {
+      content: "AC";
+      width: 170px;
+      height: 170px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 50%;
+      background: rgba(8, 11, 18, 0.58);
+      box-shadow: 0 0 60px rgba(79, 140, 255, 0.22);
+      font-size: 3.8rem;
+      font-weight: 950;
+      letter-spacing: 0.06em;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .universe-card,
+    .character-card,
+    .update-card,
+    .stat-card {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      transition: transform 0.2s ease, background 0.2s ease, border 0.2s ease;
+    }
+
+    .universe-card:hover,
+    .character-card:hover {
+      transform: translateY(-4px);
+      background: var(--panel-hover);
+      border-color: rgba(114, 164, 255, 0.28);
+    }
+
+    .universe-card {
+      min-height: 145px;
+      padding: 22px;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .universe-icon {
+      font-size: 2rem;
+    }
+
+    .universe-card h3 {
+      margin-top: 24px;
+      font-size: 1.05rem;
+    }
+
+    .universe-card span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .character-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .character-card {
+      overflow: hidden;
+      border-radius: 20px;
+    }
+
+    .character-image {
+      min-height: 190px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at center, rgba(79,140,255,0.24), transparent 40%),
+        linear-gradient(145deg, #111827, #0c111b);
+      font-size: 2.4rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+    }
+
+    .character-info {
+      padding: 20px;
+    }
+
+    .character-info h3 {
+      font-size: 1.18rem;
+    }
+
+    .character-info p {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .status-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+    }
+
+    .progress {
+      height: 7px;
+      margin-top: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #477fff, #7aa8ff);
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 18px;
+    }
+
+    .update-card {
+      padding: 24px;
+      border-radius: 20px;
+    }
+
+    .update-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .update-item {
+      display: flex;
+      gap: 13px;
+      align-items: flex-start;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .update-item:first-child {
+      padding-top: 0;
+      border-top: none;
+    }
+
+    .update-dot {
+      width: 10px;
+      height: 10px;
+      flex: 0 0 auto;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: var(--blue-bright);
+      box-shadow: 0 0 14px rgba(114, 164, 255, 0.7);
+    }
+
+    .update-item p {
+      color: #c5ceda;
+    }
+
+    .update-item time {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stat-card {
+      min-height: 130px;
+      padding: 20px;
+      border-radius: 18px;
+    }
+
+    .stat-number {
+      font-size: 2.3rem;
+      font-weight: 950;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .site-footer {
+      margin-top: 72px;
+      padding: 34px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .empty-search {
+      margin-top: 18px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 960px) {
+      .nav-links {
+        display: none;
+      }
+
+      .feature-card,
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .character-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(100% - 22px, 1180px);
+      }
+
+      .hero {
+        min-height: 520px;
+        padding-top: 72px;
+      }
+
+      .hero h1 {
+        font-size: clamp(3.4rem, 20vw, 5.5rem);
+      }
+
+      .search-wrap input {
+        height: 58px;
+      }
+
+      .card-grid,
+      .character-grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .feature-art::before {
+        width: 132px;
+        height: 132px;
+        font-size: 3rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a href="#home" class="brand" aria-label="Nexus homepage">
+        <span class="brand-mark">N</span>
+        <span>NEXUS</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#home">Home</a>
+        <a href="#characters">Characters</a>
+        <a href="#universes">Universes</a>
+        <a href="#updates">Updates</a>
+        <a href="#stats">Statistics</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="container">
+        <div class="eyebrow">Private Character Archive</div>
+        <h1>Nexus</h1>
+        <p class="hero-copy">
+          Every character. Every story. Every timeline. One connected archive for
+          original characters, alternate universes, careers, relationships, powers, and lore.
+        </p>
+
+        <div class="search-wrap">
+          <input
+            id="siteSearch"
+            type="search"
+            placeholder="Search characters or universes..."
+            aria-label="Search Nexus"
+          />
+          <span class="search-icon">⌕</span>
+        </div>
+        <p id="emptySearch" class="empty-search hidden">No matching characters or universes found.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="feature-label">Spotlight</p>
+            <h2>Featured Character</h2>
+          </div>
+          <p>A central profile with connected pages for acting, wrestling, music, family, timelines, and more.</p>
+        </div>
+
+        <article class="feature-card searchable" data-search="alex camel actor wrestler musician marvel supernatural descendants zombies">
+          <div class="feature-content">
+            <span class="feature-label">Featured Archive</span>
+            <h3>Alex Camel</h3>
+            <p>
+              Actor, professional wrestler, musician, and the performer behind characters across
+              Supernatural, Marvel, Descendants, ZOMBIES, and more.
+            </p>
+
+            <div class="tag-row">
+              <span class="tag">Actor</span>
+              <span class="tag">WWE</span>
+              <span class="tag">Music</span>
+              <span class="tag">Filmography</span>
+            </div>
+
+            <div class="button-row">
+              <a class="button button-primary" href="#">View Profile</a>
+              <a class="button button-secondary" href="#">Open IMDb Page</a>
+            </div>
+          </div>
+
+          <div class="feature-art" aria-label="Alex Camel placeholder portrait"></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="universes" class="section">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="feature-label">Explore</p>
+            <h2>Universes</h2>
+          </div>
+          <p>Browse every character by franchise, timeline, world, or connected story universe.</p>
+        </div>
+
+        <div class="card-grid" id="universeGrid">
+          <a class="universe-card searchable" data-search="marvel mcu shadow spider wanda avengers">
+            <span class="universe-icon">🕷️</span>
+            <div>
+              <h3>Marvel</h3>
+              <span>Heroes, villains, suits, and MCU timelines</span>
+            </div>
+          </a>
+
+          <a class="universe-card searchable" data-search="supernatural asher winchester dean sam demons angels">
+            <span class="universe-icon">🪽</span>
+            <div>
+              <h3>Supernatural</h3>
+              <span>Hunters, angels, demons, and family history</span>
+            </div>
+          </a>
+
+          <a class="universe-card searchable" data-search="zombies seabrook asher graves wynter werewolves zombies">
+            <span class="universe-icon">🧟</span>
+            <div>
+              <h3>ZOMBIES</h3>
+              <span>Seabrook profiles, species, and alternate arcs</span>
+            </div>
+          </a>
+
+          <a class="universe-card searchable" data-search="descendants auradon isle asher hades maleficent red">
+            <span class="universe-icon">👑</span>
+            <div>
+              <h3>Descendants</h3>
+              <span>Auradon records, families, and royal conflicts</span>
+            </div>
+          </a>
+
+          <a class="universe-card searchable" data-search="x-men mutant asher x mystique kinetic">
+            <span class="universe-icon">🧬</span>
+            <div>
+              <h3>X-Men</h3>
+              <span>Mutant files, powers, experiments, and teams</span>
+            </div>
+          </a>
+
+          <a class="universe-card searchable" data-search="star wars jedi sith asher kessel ahsoka">
+            <span class="universe-icon">✨</span>
+            <div>
+              <h3>Star Wars</h3>
+              <span>Galactic histories, alliances, and missions</span>
+            </div>
+          </a>
+
+          <a class="universe-card searchable" data-search="ninjago asher kael sora ninja">
+            <span class="universe-icon">🥷</span>
+            <div>
+              <h3>Ninjago</h3>
+              <span>Ninja profiles, elemental powers, and lore</span>
+            </div>
+          </a>
+
+          <a class="universe-card searchable" data-search="the boys cate dunlap asher vale supes">
+            <span class="universe-icon">⚡</span>
+            <div>
+              <h3>The Boys</h3>
+              <span>Supe files, rivalries, and Vought records</span>
+            </div>
+          </a>
+
+          <a class="universe-card searchable" data-search="wwe wrestling alex camel championships matches">
+            <span class="universe-icon">🏆</span>
+            <div>
+              <h3>WWE</h3>
+              <span>Match history, championships, and rivalries</span>
+            </div>
+          </a>
+
+          <a class="universe-card searchable" data-search="original characters original universe stories">
+            <span class="universe-icon">🎬</span>
+            <div>
+              <h3>Original</h3>
+              <span>Independent worlds, characters, and projects</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="characters" class="section">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="feature-label">Profiles</p>
+            <h2>Featured Characters</h2>
+          </div>
+          <p>These cards will eventually link to full profiles, custom databases, timelines, galleries, and universe pages.</p>
+        </div>
+
+        <div class="character-grid" id="characterGrid">
+          <article class="character-card searchable" data-search="alex camel actor wrestler musician">
+            <div class="character-image">AC</div>
+            <div class="character-info">
+              <h3>Alex Camel</h3>
+              <p>Actor Universe</p>
+              <div class="status-line">
+                <span>Profile completion</span>
+                <strong>100%</strong>
+              </div>
+              <div class="progress"><span style="width: 100%"></span></div>
+            </div>
+          </article>
+
+          <article class="character-card searchable" data-search="shadow spider eli mercer marvel mcu">
+            <div class="character-image">SS</div>
+            <div class="character-info">
+              <h3>Shadow Spider</h3>
+              <p>Marvel Universe</p>
+              <div class="status-line">
+                <span>Profile completion</span>
+                <strong>82%</strong>
+              </div>
+              <div class="progress"><span style="width: 82%"></span></div>
+            </div>
+          </article>
+
+          <article class="character-card searchable" data-search="asher winchester supernatural demon angel">
+            <div class="character-image">AW</div>
+            <div class="character-info">
+              <h3>Asher Winchester</h3>
+              <p>Supernatural Universe</p>
+              <div class="status-line">
+                <span>Profile completion</span>
+                <strong>95%</strong>
+              </div>
+              <div class="progress"><span style="width: 95%"></span></div>
+            </div>
+          </article>
+
+          <article class="character-card searchable" data-search="asher graves zombies werewolf zombie seabrook">
+            <div class="character-image">AG</div>
+            <div class="character-info">
+              <h3>Asher Graves</h3>
+              <p>ZOMBIES Universe</p>
+              <div class="status-line">
+                <span>Profile completion</span>
+                <strong>76%</strong>
+              </div>
+              <div class="progress"><span style="width: 76%"></span></div>
+            </div>
+          </article>
+
+          <article class="character-card searchable" data-search="asher descendants hades maleficent auradon">
+            <div class="character-image">AD</div>
+            <div class="character-info">
+              <h3>Asher</h3>
+              <p>Descendants Universe</p>
+              <div class="status-line">
+                <span>Profile completion</span>
+                <strong>71%</strong>
+              </div>
+              <div class="progress"><span style="width: 71%"></span></div>
+            </div>
+          </article>
+
+          <article class="character-card searchable" data-search="x asher mutant x-men mystique kinetic">
+            <div class="character-image">X</div>
+            <div class="character-info">
+              <h3>X / Asher</h3>
+              <p>X-Men Universe</p>
+              <div class="status-line">
+                <span>Profile completion</span>
+                <strong>48%</strong>
+              </div>
+              <div class="progress"><span style="width: 48%"></span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="updates" class="section">
+      <div class="container">
+        <div class="bottom-grid">
+          <div class="update-card">
+            <p class="feature-label">Archive Log</p>
+            <h2>Newest Updates</h2>
+
+            <div class="update-list">
+              <div class="update-item">
+                <span class="update-dot"></span>
+                <div>
+                  <p>Alex Camel selected as the first complete Nexus character profile.</p>
+                  <time>Homepage version 1.0</time>
+                </div>
+              </div>
+
+              <div class="update-item">
+                <span class="update-dot"></span>
+                <div>
+                  <p>Shadow Spider suit archive and MCU timeline prepared for future expansion.</p>
+                  <time>Coming soon</time>
+                </div>
+              </div>
+
+              <div class="update-item">
+                <span class="update-dot"></span>
+                <div>
+                  <p>Separate timeline support planned for ZOMBIES and Descendants story arcs.</p>
+                  <time>Coming soon</time>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="stats" class="stats">
+            <div class="stat-card">
+              <div class="stat-number">23</div>
+              <div class="stat-label">Characters</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">10</div>
+              <div class="stat-label">Universes</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">41</div>
+              <div class="stat-label">Timelines</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">1.0</div>
+              <div class="stat-label">Current Version</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>NEXUS</strong>
+        <p>Every character. Every story. Every timeline.</p>
+      </div>
+      <div>
+        <p>Version 1.0</p>
+        <p>Created by Hunter Lafleche</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const searchInput = document.getElementById("siteSearch");
+    const searchableItems = [...document.querySelectorAll(".searchable")];
+    const emptySearch = document.getElementById("emptySearch");
+
+    searchInput.addEventListener("input", () => {
+      const term = searchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      searchableItems.forEach((item) => {
+        const searchableText = `${item.textContent} ${item.dataset.search || ""}`.toLowerCase();
+        const matches = searchableText.includes(term);
+
+        item.classList.toggle("hidden", !matches);
+
+        if (matches) {
+          visibleCount += 1;
+        }
+      });
+
+      emptySearch.classList.toggle("hidden", visibleCount > 0 || term === "");
+    });
+  </script>
+</body>
+</html>
